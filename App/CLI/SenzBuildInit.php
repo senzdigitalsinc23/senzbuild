@@ -84,8 +84,8 @@ class SenzBuildInit extends Command
 
         // Step 3: Load config and create database if requested
         if ($createDb) {
-            \App\Core\ConfigCache::setBasePath(__DIR__ . '/../../../');
-            Config::load(__DIR__ . '/../../../config');
+            \App\Core\ConfigCache::setBasePath(__DIR__ . '/../../');
+            Config::load(__DIR__ . '/../../config');
 
             $driver = Config::get('database.driver', 'mysql');
             $host = Config::get('database.host', '127.0.0.1');
@@ -94,7 +94,8 @@ class SenzBuildInit extends Command
             $pass = Config::get('database.password', '');
 
             if (empty($dbname)) {
-                $this->warning('No database name found in config. Skipping database creation.');
+                $this->error('DB_NAME not found in config/database.php and no --db=<name> argument given. Aborting.');
+                exit(1);
             } else {
                 $this->info("Creating database '{$dbname}' (driver: {$driver})...");
                 $this->createDatabase($driver, $host, $dbname, $user, $pass);
