@@ -28,7 +28,7 @@ class ContainerTest extends TestCase
     public function testSingleton(): void
     {
         $this->container->singleton('test.singleton', function() {
-            return new stdClass();
+            return new \stdClass();
         });
 
         $instance1 = $this->container->get('test.singleton');
@@ -39,7 +39,7 @@ class ContainerTest extends TestCase
 
     public function testResolveClass(): void
     {
-        $this->assertInstanceOf(stdClass::class, $this->container->get(stdClass::class));
+        $this->assertInstanceOf(\stdClass::class, $this->container->get(\stdClass::class));
     }
 
     public function testResolveWithDependencies(): void
@@ -62,7 +62,7 @@ class ContainerTest extends TestCase
     {
         $this->container->bind('test.service', function() { return 'val'; });
         $this->assertTrue($this->container->has('test.service'));
-        $this->assertTrue($this->container->has(stdClass::class));
+        $this->assertTrue($this->container->has(\stdClass::class));
         $this->assertFalse($this->container->has('unknown.service'));
     }
 }

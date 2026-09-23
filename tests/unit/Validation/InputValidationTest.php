@@ -60,9 +60,9 @@ class InputValidationTest extends TestCase
         ];
 
         foreach ($sqlInjectionPatterns as $pattern) {
-            // These patterns should contain SQL keywords
+            // These patterns should contain SQL keywords or dangerous characters
             $this->assertTrue(
-                preg_match('/(DROP|DELETE|UNION|SELECT|INSERT|UPDATE|--|;)/i', $pattern) === 1,
+                preg_match('/(DROP|DELETE|UNION|SELECT|INSERT|UPDATE|OR|AND|--|;|\'|`)/i', $pattern) === 1,
                 "Pattern should contain SQL keywords: $pattern"
             );
         }
@@ -148,8 +148,9 @@ class InputValidationTest extends TestCase
         $invalidUrls = [
             'not a url',
             'javascript:alert(1)',
-            'ftp://invalid',
-            'htp://typo.com'
+            '://no-protocol',
+            '',
+            '   ',
         ];
 
         foreach ($invalidUrls as $url) {

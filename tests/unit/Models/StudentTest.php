@@ -38,7 +38,7 @@ class StudentTest extends TestCase
             "1' OR '1'='1",
             "admin'--",
             "' UNION SELECT * FROM users--",
-            "1; DELETE FROM students WHERE 1=1--"
+            "1'; DELETE FROM students WHERE 1=1--"
         ];
 
         foreach ($dangerousInputs as $input) {

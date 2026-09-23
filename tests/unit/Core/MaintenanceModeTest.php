@@ -9,7 +9,7 @@ use App\Core\DrainMode;
 
 class MaintenanceModeTest extends TestCase
 {
-    protected function tearDown(): void
+    protected function setUp(): void { MaintenanceMode::disable(); DrainMode::cancel(); } protected function tearDown(): void
     {
         MaintenanceMode::disable();
         DrainMode::cancel();
@@ -63,3 +63,4 @@ class MaintenanceModeTest extends TestCase
         DrainMode::cancel();
     }
 }
+

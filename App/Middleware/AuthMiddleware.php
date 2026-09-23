@@ -15,7 +15,7 @@ class AuthMiddleware implements MiddlewareInterface
     public function handle(Request $request, Response $response, callable $next): Response
     {
         if (!Session::get('user')) {
-            $authorization = $request->getHeader('Authorization');
+            $authorization = $request->header('Authorization');
 
             if ($authorization && preg_match('/Bearer\s+(.+)$/i', $authorization, $matches)) {
                 try {

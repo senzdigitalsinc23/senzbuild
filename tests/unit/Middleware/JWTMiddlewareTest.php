@@ -13,7 +13,7 @@ use Firebase\JWT\JWT;
  */
 class JWTMiddlewareTest extends TestCase
 {
-    private string $testSecret = 'test_jwt_secret_key_for_testing';
+    private string $testSecret = 'super_secret_jwt_key_that_is_long_enough_for_hs256_algorithm';
 
     /**
      * Test middleware requires JWT_SECRET

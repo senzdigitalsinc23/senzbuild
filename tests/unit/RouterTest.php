@@ -27,7 +27,7 @@ class RouterTest extends TestCase
         // We check if the route was added by attempting to dispatch it
         $request = $this->createMock(RequestInterface::class);
         $request->method('getMethod')->willReturn('GET');
-        $request->method('getUri')->willReturn('/test');
+        $request->method('getPath')->willReturn('/test');
 
         $response = new Response();
 
@@ -40,7 +40,7 @@ class RouterTest extends TestCase
     {
         $request = $this->createMock(RequestInterface::class);
         $request->method('getMethod')->willReturn('GET');
-        $request->method('getUri')->willReturn('/not-found');
+        $request->method('getPath')->willReturn('/not-found');
 
         $response = new Response();
         $result = $this->router->dispatch($request, $response);
@@ -58,7 +58,7 @@ class RouterTest extends TestCase
 
         $request = $this->createMock(RequestInterface::class);
         $request->method('getMethod')->willReturn('GET');
-        $request->method('getUri')->willReturn('/user/123');
+        $request->method('getPath')->willReturn('/user/123');
 
         $response = new Response();
 

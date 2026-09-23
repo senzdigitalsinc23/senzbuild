@@ -145,6 +145,14 @@ class Request extends ServerRequest implements RequestInterface
     }
 
     /**
+     * Get a single header value as a string (alias for getHeaderLine).
+     */
+    public function header(string $name): ?string
+    {
+        return $this->getHeaderLine($name);
+    }
+
+    /**
      * Set an attribute (custom, not PSR-7 immutable).
      */
     public function setAttribute($key, $value): void

@@ -50,7 +50,7 @@ class AuthMiddlewareTest extends TestCase
     #[Test]
     public function returns_401_when_no_auth_header_and_no_session(): void
     {
-        $this->request->method('getHeader')->with('Authorization')->willReturn(null);
+        $this->request->method('header')->with('Authorization')->willReturn(null);
 
         $result = $this->middleware->handle($this->request, $this->response, $this->makeNext());
         $this->assertSame(401, $result->getStatusCode());
@@ -61,7 +61,7 @@ class AuthMiddlewareTest extends TestCase
     #[Test]
     public function returns_401_when_header_is_not_bearer(): void
     {
-        $this->request->method('getHeader')->with('Authorization')->willReturn('Basic dGVzdDp0ZXN0');
+        $this->request->method('header')->with('Authorization')->willReturn('Basic dGVzdDp0ZXN0');
 
         $result = $this->middleware->handle($this->request, $this->response, $this->makeNext());
         $this->assertSame(401, $result->getStatusCode());
@@ -70,7 +70,7 @@ class AuthMiddlewareTest extends TestCase
     #[Test]
     public function returns_401_when_header_is_empty(): void
     {
-        $this->request->method('getHeader')->with('Authorization')->willReturn('');
+        $this->request->method('header')->with('Authorization')->willReturn('');
 
         $result = $this->middleware->handle($this->request, $this->response, $this->makeNext());
         $this->assertSame(401, $result->getStatusCode());
@@ -79,7 +79,7 @@ class AuthMiddlewareTest extends TestCase
     #[Test]
     public function returns_json_error_response(): void
     {
-        $this->request->method('getHeader')->with('Authorization')->willReturn(null);
+        $this->request->method('header')->with('Authorization')->willReturn(null);
 
         $result = $this->middleware->handle($this->request, $this->response, $this->makeNext());
         $this->assertSame(401, $result->getStatusCode());

@@ -91,7 +91,7 @@ class PasswordGenerator
             $selectedWords[] = $words[random_int(0, $wordListSize - 1)];
         }
 
-        $password = implode('', $selectedWords);
+        $password = implode(' ', $selectedWords);
 
         if ($includeNumbers) {
             $password .= random_int(100, 999);

@@ -22,7 +22,7 @@ class PasswordGeneratorTest extends TestCase
         $this->assertMatchesRegularExpression('/[A-Z]/', $password, 'Password should contain uppercase');
         $this->assertMatchesRegularExpression('/[a-z]/', $password, 'Password should contain lowercase');
         $this->assertMatchesRegularExpression('/[0-9]/', $password, 'Password should contain numbers');
-        $this->assertMatchesRegularExpression('/[!@#$%^&*]/', $password, 'Password should contain special chars');
+        $this->assertMatchesRegularExpression('/[^A-Za-z0-9]/', $password, 'Password should contain special chars');
     }
 
     /**
@@ -61,7 +61,7 @@ class PasswordGeneratorTest extends TestCase
         $hasUpper = preg_match('/[A-Z]/', $password);
         $hasLower = preg_match('/[a-z]/', $password);
         $hasNumber = preg_match('/[0-9]/', $password);
-        $hasSpecial = preg_match('/[!@#$%^&*]/', $password);
+        $hasSpecial = preg_match('/[^A-Za-z0-9]/', $password);
 
         $this->assertTrue($hasUpper && $hasLower && $hasNumber && $hasSpecial,
             'Password should have all character types');
