@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(xargs grep -L \"declare\\(strict_types=1\\);\")",
-      "Bash(composer require *)"
-    ]
-  }
-}
