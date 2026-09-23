@@ -1,0 +1,21 @@
+<?php
+return [
+    'jpg'  => 'image/jpeg',
+    'jpeg' => 'image/jpeg',
+    'png'  => 'image/png',
+    'gif'  => 'image/gif',
+    'webp' => 'image/webp',
+    'svg'  => 'image/svg+xml',
+    'pdf'  => 'application/pdf',
+    'txt'  => 'text/plain',
+    'csv'  => 'text/csv',
+    'json' => 'application/json',
+    'zip'  => 'application/zip',
+    'doc'  => 'application/msword',
+    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'mp4'  => 'video/mp4',
+    'mp3'  => 'audio/mpeg',
+    'wav'  => 'audio/wav',
+    'exe'  => 'application/x-msdownload',
+];

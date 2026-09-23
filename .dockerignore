@@ -1,0 +1,11 @@
+vendor/
+.git
+.gitignore
+storage/logs/*.log
+storage/cache/*.cache
+storage/files/*
+.env
+.dockerignore
+Dockerfile
+docker-compose.yml
+.vscode/
