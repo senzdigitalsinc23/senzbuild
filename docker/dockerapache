@@ -1,0 +1,31 @@
+# Use official PHP with Apache image
+FROM php:8.2-apache
+
+# Enable Apache modules
+RUN a2enmod rewrite headers
+
+# Install required PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Set working directory inside container
+WORKDIR /var/www/html
+
+# Copy framework code into container
+COPY ./public /var/www/html
+COPY ./ /var/www/framework
+
+# Set Apache document root to /public
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Copy custom Apache config
+COPY ./docker/apache/vhost.conf /etc/apache2/sites-available/000-default.conf
+
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html /var/www/framework \
+    && chmod -R 755 /var/www/html /var/www/framework
+
+# Expose Apache port
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]

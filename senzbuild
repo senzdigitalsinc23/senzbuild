@@ -1,0 +1,183 @@
+#!/usr/bin/env php
+<?php
+/**
+ * SenzBuild — Global CLI launcher for the SENZ Framework.
+ *
+ * Usage (from anywhere):
+ *   senzbuild new <project-name>
+ *   senzbuild init [--db]
+ *   senzbuild serve
+ *   senzbuild migrate
+ *
+ * Auto-discovers the framework installation and delegates to it.
+ */
+
+// ─── Discover framework path ────────────────────────────────────────────────
+
+$frameworkPath = null;
+
+// Priority 1: Environment variable
+if ($env = getenv('SENZ_FRAMEWORK_PATH')) {
+    $frameworkPath = $env;
+}
+
+// Priority 2: Config file (created during install)
+if (!$frameworkPath) {
+    $configPath = dirname(__FILE__) . '/.senzbuild-config';
+    if (file_exists($configPath)) {
+        $frameworkPath = trim(file_get_contents($configPath));
+    }
+}
+
+// Priority 3: Check sibling to this script
+if (!$frameworkPath) {
+    $scriptDir = realpath(dirname(__FILE__));
+    foreach (['framework', 'src'] as $dir) {
+        $candidate = $scriptDir . '/' . $dir;
+        if (is_dir($candidate . '/vendor') && file_exists($candidate . '/vendor/autoload.php')) {
+            $frameworkPath = $candidate;
+            break;
+        }
+    }
+}
+
+// Priority 4: Walk up from cwd (useful when run from a project)
+if (!$frameworkPath) {
+    $searchPath = realpath(getcwd()) ?: getcwd();
+    for ($i = 0; $i < 10; $i++) {
+        foreach (['framework', 'src'] as $dir) {
+            $candidate = $searchPath . '/' . $dir;
+            if (is_dir($candidate . '/vendor') && file_exists($candidate . '/vendor/autoload.php')) {
+                $frameworkPath = $candidate;
+                goto found;
+            }
+        }
+        $parent = dirname($searchPath);
+        if ($parent === $searchPath) break;
+        $searchPath = $parent;
+    }
+}
+
+// Priority 5: Known common paths
+if (!$frameworkPath) {
+    $commonPaths = [
+        getenv('USERPROFILE') . '/projects/framework',
+        getenv('USERPROFILE') . '/code/framework',
+        'C:/projects/framework',
+        'D:/projects/framework',
+        dirname(__FILE__, 3) . '/framework',
+    ];
+    foreach ($commonPaths as $path) {
+        if ($path && is_dir($path . '/vendor') && file_exists($path . '/vendor/autoload.php')) {
+            $frameworkPath = $path;
+            break;
+        }
+    }
+}
+
+found:
+
+if (!$frameworkPath) {
+    echo "\033[31mERROR:\033[0m SENZ Framework not found.\n\n";
+    echo "To fix this, create the config file manually:\n\n";
+    echo "  echo '<path-to-framework>' > \"D:\\composer\\.senzbuild-config\"\n\n";
+    echo "Or set the environment variable:\n\n";
+    echo "  setx SENZ_FRAMEWORK_PATH \"C:\\path\\to\\framework\"\n\n";
+    echo "Then restart your terminal.\n";
+    exit(1);
+}
+
+// Ensure trailing slash consistency
+$frameworkPath = rtrim($frameworkPath, DIRECTORY_SEPARATOR);
+
+// ─── Bootstrap ───────────────────────────────────────────────────────────────
+
+define('SENZ_FRAMEWORK_PATH', $frameworkPath);
+
+require $frameworkPath . '/vendor/autoload.php';
+
+$envFile = $frameworkPath . '/.env';
+if (file_exists($envFile) && class_exists(\Dotenv\Dotenv::class)) {
+    $dotenv = \Dotenv\Dotenv::createImmutable($frameworkPath);
+    $dotenv->safeLoad();
+}
+
+use App\CLI\QueueWorker;
+use App\CLI\QueueRetry;
+use App\CLI\QueueFlush;
+use App\CLI\QueueFailed;
+use App\CLI\QueueStats;
+use App\CLI\QueuePrune;
+use App\CLI\AuditLogs;
+use App\CLI\Seeder;
+use App\CLI\DevServer;
+use App\CLI\MakeDb;
+use App\CLI\PromoteStudents;
+use App\CLI\Migrate;
+use App\CLI\MakeController;
+use App\CLI\MakeModel;
+use App\CLI\MakeMigration;
+use App\CLI\SenzBuildNew;
+use App\CLI\SenzBuildInit;
+
+$commands = [
+    // Build & scaffold
+    'build:new'       => SenzBuildNew::class,
+    'build:init'      => SenzBuildInit::class,
+
+    // Server & DB
+    'serve'           => DevServer::class,
+    'migrate'         => Migrate::class,
+    'make:db'         => MakeDb::class,
+
+    // Code generation
+    'make:controller' => MakeController::class,
+    'make:model'      => MakeModel::class,
+    'make:migration'  => MakeMigration::class,
+
+    // Queue
+    'queue:work'      => QueueWorker::class,
+    'queue:retry'     => QueueRetry::class,
+    'queue:flush'     => QueueFlush::class,
+    'queue:failed'    => QueueFailed::class,
+    'queue:stats'     => QueueStats::class,
+    'queue:prune'     => QueuePrune::class,
+
+    // Misc
+    'db:seed'         => Seeder::class,
+    'audit:logs'      => AuditLogs::class,
+    'promote:students'=> PromoteStudents::class,
+];
+
+$commandName = $argv[1] ?? null;
+$args = array_slice($argv, 2);
+
+if (!$commandName || $commandName === '--help' || $commandName === '-h') {
+    echo "\033[36mSENZ Framework CLI — SenzBuild\033[0m\n";
+    echo "\033[33mFramework:\033[0m {$frameworkPath}\n\n";
+    echo "\033[33mBuild commands:\033[0m\n";
+    echo "  senzbuild new <name>              Create a new project\n";
+    echo "  senzbuild new <name> --no-install Skip composer install\n";
+    echo "  senzbuild init                    Initialize project dependencies\n";
+    echo "  senzbuild init --db               Create database from .env\n\n";
+    echo "\033[33mApplication commands:\033[0m\n";
+    foreach (array_keys($commands) as $cmd) {
+        if (!str_starts_with($cmd, 'build:')) {
+            echo "  senzbuild {$cmd}\n";
+        }
+    }
+    echo "\n\033[33mConfig:\033[0m\n";
+    echo "  SENZ_FRAMEWORK_PATH   Override auto-discovery path\n";
+    echo "  ~/.senzbuild-config   Framework path config file\n\n";
+    exit(0);
+}
+
+if (!isset($commands[$commandName])) {
+    echo "\033[31mERROR:\033[0m Unknown command '{$commandName}'\n\n";
+    echo "Run 'senzbuild' (no args) to see available commands.\n";
+    exit(1);
+}
+
+$commandClass = $commands[$commandName];
+$command = new $commandClass($args);
+$command->handle($args);

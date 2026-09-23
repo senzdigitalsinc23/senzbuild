@@ -1,0 +1,44 @@
+# Force CRLF for all text files on Windows
+* text=auto eol=crlf
+
+# Binary files - don't touch line endings
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.zip binary
+*.exe binary
+*.pdf binary
+*.csv binary
+*.jar binary
+*.class binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.lock binary
+
+# Keep LF for config/shell scripts
+*.sh eol=lf
+*.yml eol=lf
+*.yaml eol=lf
+*.json eol=lf
+*.xml eol=lf
+*.neon eol=lf
+*.ini eol=lf
+*.env eol=lf
+*.gitignore eol=lf
+*.gitattributes eol=lf
