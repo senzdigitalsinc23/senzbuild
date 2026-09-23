@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+<?php
+/**
+ * SENZ Framework Built-in Server
+ * Equivalent to Laravel's `php artisan serve`
+ *
+ * Usage: php bin/server [options]
+ *   --port=8000   Port to serve on (default: 8000)
+ *   --host=0.0.0.0  Host to bind to (default: 127.0.0.1)
+ */
+
+$port = 8000;
+$host = '127.0.0.1';
+
+foreach ($_SERVER['argv'] ?? [] as $arg) {
+    if (preg_match('/--port=(\d+)/', $arg, $m)) {
+        $port = (int)$m[1];
+    }
+    if (preg_match('/--host=(\S+)/', $arg, $m)) {
+        $host = $m[1];
+    }
+}
+
+$documentRoot = __DIR__ . '/../public';
+
+// Check if document root exists
+if (!is_dir($documentRoot)) {
+    fwrite(STDERR, "ERROR: Document root not found at {$documentRoot}\n");
+    exit(1);
+}
+
+echo "\n";
+echo "  \033[36mSENZ Framework\033[0m development server\n";
+echo "  \033[33mDocument Root:\033[0m {$documentRoot}\n";
+echo "  \033[33mServer:\033[0m http://{$host}:{$port}\n";
+echo "\n";
+echo "  Press Ctrl+C to stop the server\n";
+echo "\n";
+
+// Start PHP built-in server
+$_SERVER['SERVER_NAME'] = $host;
+$_SERVER['SERVER_PORT'] = $port;
+
+// Forward to PHP built-in server
+passthru("php -S {$host}:{$port} -t " . escapeshellarg($documentRoot) . " " . escapeshellarg(__DIR__ . '/../public/router.php') ?? '', $exitCode);
+
+exit($exitCode);

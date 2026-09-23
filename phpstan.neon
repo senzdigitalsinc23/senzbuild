@@ -1,0 +1,14 @@
+parameters:
+    level: 7
+    paths:
+        - App
+        - Core
+        - Database
+        - Services
+        - Support
+        - Repositories
+    excludePaths:
+        - vendor
+        - tests
+        - storage
+        - node_modules
