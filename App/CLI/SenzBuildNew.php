@@ -255,9 +255,15 @@ abstract class Controller extends Base
             'config/api.php' => 'config/api.php',
             'config/queue.php' => 'config/queue.php',
             'Core/helpers.php' => 'helpers.php',
-            'App/CLI/MakeController.php' => 'App/CLI/MakeController.php',
-            'App/CLI/MakeModel.php' => 'App/CLI/MakeModel.php',
-            'App/CLI/Migrate.php' => 'App/CLI/Migrate.php',
+            'App/CLI/MakeController.php' => 'src/CLI/MakeController.php',
+            'App/CLI/MakeModel.php' => 'src/CLI/MakeModel.php',
+            'App/CLI/Migrate.php' => 'src/CLI/Migrate.php',
+            'App/CLI/SenzBuildInit.php' => 'src/CLI/SenzBuildInit.php',
+            'App/CLI/SenzBuildNew.php' => 'src/CLI/SenzBuildNew.php',
+            'App/CLI/MakeDb.php' => 'src/CLI/MakeDb.php',
+            'App/CLI/MakeMigration.php' => 'src/CLI/MakeMigration.php',
+            'App/CLI/Command.php' => 'src/CLI/Command.php',
+            'App/CLI/CommandInterface.php' => 'src/CLI/CommandInterface.php',
         ];
 
         foreach ($filesToCopy as $src => $dst) {
@@ -273,3 +279,4 @@ abstract class Controller extends Base
         }
     }
 }
+

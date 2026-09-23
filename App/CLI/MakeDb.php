@@ -16,7 +16,8 @@ class MakeDb extends Command
         }
 
         // Load config so we can read DB host/credentials
-        Config::load(dirname(__DIR__, 2) . '/config');
+        \App\Core\ConfigCache::setBasePath(dirname(__DIR__, 2));
+            Config::load(dirname(__DIR__, 2) . '/config');
 
         $host = Config::get('database.host') ?? '127.0.0.1';
         $user = Config::get('database.username') ?? Config::get('db_user') ?? 'root';
@@ -58,3 +59,4 @@ class MakeDb extends Command
         }
     }
 }
+

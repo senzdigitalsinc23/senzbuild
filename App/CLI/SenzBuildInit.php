@@ -84,6 +84,7 @@ class SenzBuildInit extends Command
 
         // Step 3: Load config and create database if requested
         if ($createDb) {
+            \App\Core\ConfigCache::setBasePath(__DIR__ . '/../../../');
             Config::load(__DIR__ . '/../../../config');
 
             $driver = Config::get('database.driver', 'mysql');
@@ -166,3 +167,4 @@ class SenzBuildInit extends Command
         }
     }
 }
+

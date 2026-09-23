@@ -15,7 +15,17 @@ namespace App\Core;
  */
 class ConfigCache
 {
-    protected static string $cachePath;
+    protected static string $cachePath = '';
+    protected static ?string $basePath = null;
+
+    /**
+     * Set the base path for config/cache resolution.
+     * Call this before any cache operations when running from a scaffolded project.
+     */
+    public static function setBasePath(string $path): void
+    {
+        self::$basePath = rtrim($path, '/\\');
+    }
 
     /**
      * Generate the config cache file from all config/*.php files.
@@ -26,7 +36,7 @@ class ConfigCache
      */
     public static function cache(?string $configDir = null, ?string $outputDir = null): string
     {
-        $basePath = dirname(__DIR__);
+        $basePath = self::$basePath ?? dirname(__DIR__);
         $configDir ??= $basePath . '/config';
         $outputDir ??= $basePath . '/storage/config';
 
@@ -67,7 +77,7 @@ class ConfigCache
      */
     public static function hasCache(?string $outputDir = null): bool
     {
-        $basePath = dirname(__DIR__);
+        $basePath = self::$basePath ?? dirname(__DIR__);
         $outputDir ??= $basePath . '/storage/config';
         $path = $outputDir . '/cache.php';
 
@@ -79,7 +89,7 @@ class ConfigCache
      */
     public static function clear(?string $outputDir = null): void
     {
-        $basePath = dirname(__DIR__);
+        $basePath = self::$basePath ?? dirname(__DIR__);
         $outputDir ??= $basePath . '/storage/config';
         $path = $outputDir . '/cache.php';
 
@@ -93,7 +103,7 @@ class ConfigCache
      */
     public static function getPath(?string $outputDir = null): string
     {
-        $basePath = dirname(__DIR__);
+        $basePath = self::$basePath ?? dirname(__DIR__);
         $outputDir ??= $basePath . '/storage/config';
         return $outputDir . '/cache.php';
     }
