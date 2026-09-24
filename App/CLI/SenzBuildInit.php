@@ -49,20 +49,24 @@ class SenzBuildInit extends Command
 
         $this->info('Initializing project...');
 
-        // Step 1: Composer install
+        // Step 1: Composer install (skip if vendor already exists)
         $this->info('Running composer install...');
-        $composerOutput = [];
-        $composerResult = 0;
-        exec('composer install --no-interaction --prefer-dist 2>&1', $composerOutput, $composerResult);
-        foreach ($composerOutput as $line) {
-            echo "  {$line}\n";
+        $vendorExists = is_dir(__DIR__ . '/../../../vendor');
+        if ($vendorExists) {
+            $this->info('Vendor directory exists, skipping composer install.');
+        } else {
+            $composerOutput = [];
+            $composerResult = 0;
+            exec('composer install --no-interaction --prefer-dist 2>&1', $composerOutput, $composerResult);
+            foreach ($composerOutput as $line) {
+                echo "  {$line}\n";
+            }
+            if ($composerResult !== 0) {
+                $this->error('Composer install failed. Check the output above.');
+                return;
+            }
+            $this->success('Dependencies installed');
         }
-
-        if ($composerResult !== 0) {
-            $this->error('Composer install failed. Check the output above.');
-            return;
-        }
-        $this->success('Dependencies installed');
 
         // Step 2: Create storage directories
         $this->info('Creating storage directories...');

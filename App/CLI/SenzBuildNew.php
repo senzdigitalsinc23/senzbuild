@@ -57,12 +57,19 @@ $router->dispatch($request, $response);
         "monolog/monolog": "^3.9",
         "firebase/php-jwt": "^7.0.4",
         "phpmailer/phpmailer": "^6.10",
-        "guzzlehttp/psr7": "^2.12"
+        "guzzlehttp/psr7": "^2.12",
+        "senzdigitals/framework": "dev-main"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
         "fakerphp/faker": "^1.24"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "{FRAMEWORK_PATH}"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\\\": "src/",
@@ -155,6 +162,9 @@ abstract class Controller extends Base
 
         $this->info("Creating project '{$projectName}'...");
 
+        // Resolve the framework path for composer repository
+        $frameworkPath = realpath(__DIR__ . '/../../');
+
         // Validate working directory is writable
         $cwd = getcwd();
         if (!is_writable($cwd)) {
@@ -198,6 +208,7 @@ abstract class Controller extends Base
             // Replace {PROJECT_NAME} and {PROJECT_NAME_LOWER} placeholders in file content
             $content = str_replace('{PROJECT_NAME}', $projectName, $content);
             $content = str_replace('{PROJECT_NAME_LOWER}', strtolower($projectName), $content);
+            $content = str_replace('{FRAMEWORK_PATH}', str_replace('\\', '/', $frameworkPath), $content);
             file_put_contents($fullPath, $content);
             $this->info("  Created {$relativePath}");
         }
